@@ -1,0 +1,4 @@
+[env]
+MASTO_BASE="https://types.pl"
+MASTO_TOKEN="<your token from https://types.pl/settings/applications>"
+NEWBOT_LIVE_MODE="unlisted"

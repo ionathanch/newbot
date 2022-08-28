@@ -114,16 +114,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "minlambda"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0814d4e33f2454c6878110bedb660f550e88c216ec3157ae03ec3f7e9f14d661"
-dependencies = [
- "serde",
- "serde_json",
-]
-
-[[package]]
 name = "minreq"
 version = "2.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -157,7 +147,6 @@ dependencies = [
 name = "newbot"
 version = "0.1.0"
 dependencies = [
- "minlambda",
  "minreq",
  "rand",
  "serde",

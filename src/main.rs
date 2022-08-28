@@ -28,11 +28,7 @@ struct Emoji {
     shortcode: String,
 }
 
-fn draft_toot(base: &str, live: bool) -> Result<NewStatus, Error> {
-    let emojos: Vec<Emoji> = minreq::get(&format!("{}/api/v1/custom_emojis", base))
-        .send()?
-        .json()?;
-
+fn draft_toot(emojos: &Vec<Emoji>, live: bool) -> Result<NewStatus, Error> {
     let n = thread_rng().gen_range(0..(EMOJI_SETS.len() + emojos.len()));
     let emoji = if n < EMOJI_SETS.len() {
         let set = EMOJI_SETS[n];
@@ -52,25 +48,27 @@ fn draft_toot(base: &str, live: bool) -> Result<NewStatus, Error> {
     })
 }
 
-fn main() -> ! {
+fn main() -> Result<(), Error> {
     let base = env::var("MASTO_BASE").unwrap();
     let token = env::var("MASTO_TOKEN").unwrap();
     let live = env::var_os("NEWBOT_LIVE_MODE").is_some();
+    let emojos: Vec<Emoji> = minreq::get(&format!("{}/api/v1/custom_emojis", base))
+        .with_header("authorization", format!("Bearer {}", &token))
+        .send()?
+        .json()?;
 
-    minlambda::run(|_: serde::de::IgnoredAny| -> Result<(), Error> {
-        minreq::post(&format!("{}/api/v1/statuses", &base))
-            .with_header("authorization", format!("Bearer {}", &token))
-            .with_json(&draft_toot(&base, live)?)?
-            .send()?;
-        Ok(())
-    })
+    minreq::post(&format!("{}/api/v1/statuses", &base))
+        .with_header("authorization", format!("Bearer {}", &token))
+        .with_json(&draft_toot(&emojos, live)?)?
+        .send()?;
+    Ok(())
 }
 
 #[cfg(test)]
 mod tests {
     #[test]
     fn test_draft_toot() {
-        let status = super::draft_toot("https://cybre.space", false).unwrap();
+        let status = super::draft_toot("https://types.pl", false).unwrap();
         assert!(status.status.len() > 18);
     }
 }

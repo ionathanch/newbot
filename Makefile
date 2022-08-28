@@ -6,6 +6,12 @@ lambda.zip: target/x86_64-unknown-linux-musl/release/newbot
 	zip lambda.zip bootstrap
 	rm -f bootstrap
 
+newbot:
+	cargo build --bin newbot --no-default-features --release
+
+new:
+	cargo run --release newbot
+
 .PHONY: target/x86_64-unknown-linux-musl/release/newbot
 target/x86_64-unknown-linux-musl/release/newbot:
 	cargo build --bin newbot --no-default-features --release --target x86_64-unknown-linux-musl
